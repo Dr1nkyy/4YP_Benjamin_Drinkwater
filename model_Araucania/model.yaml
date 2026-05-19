@@ -1,0 +1,45 @@
+import:  # Import other files from paths relative to this file, or absolute paths
+    - 'model_config/techs_CHL_La_Araucania_edited.yaml'  # This file specifies the model's technologies
+    - 'model_config/locations_custom_from_metadata.yaml'  # This file specifies the model's locations
+
+# Model configuration: all settings that affect the built model
+model:
+    name: Core model
+
+    # What version of Calliope this model is intended for
+    calliope_version: 0.6.10
+
+    # Time series data path - can either be a path relative to this file, or an absolute path
+    timeseries_data_path: 'timeseries_data'
+
+    subset_time: ['2023-01-01 00:00:00', '2023-12-31 23:00:00']  # Test with 1 week (change to '2023-12-31 23:00:00' for full year)
+    time:
+        function: resample
+        function_options: {'resolution': '4H'}
+
+
+
+# Run configuration: all settings that affect how the built model is run
+run:
+    solver: gurobi
+    solver_options: # These solver options are new. 
+        Method: 2
+        NumericFocus: 2
+        ScaleFlag: 2
+        Crossover: 0
+        BarConvTol: 1.0e-6
+
+    ensure_feasibility: true  # Switches on the "unmet demand" constraint
+    bigM: 1e4  # Sets the scale of unmet demand, which cannot be too high, otherwise the optimisation will not converge (Decreased from 1e6 to 1e4 for better convergence)
+
+    zero_threshold: 1e-8  # Any value coming out of the backend that is smaller than this (due to floating point errors, probably) will be set to zero.
+    # This is important for the "unmet demand" constraint, 
+    # which can be violated by small floating point errors, causing the model to be infeasible (increased to 1e-8 from 1e-10 to avoid 
+    # infeasibility due to floating point errors)
+
+    mode: plan  # Choices: plan, operate
+
+    objective_options.cost_class: {monetary: 1}
+
+    cyclic_storage: true
+

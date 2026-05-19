@@ -1,0 +1,135 @@
+
+##
+# LOCATIONS
+##
+locations:
+  region_47_0_32_25:
+    coordinates:
+      lat: 47.0
+      lon: 32.25
+    techs:
+      ammonia_ccgt: null
+      ammonia_storage: null
+      battery: null
+      compressed_hydrogen_storage: null
+      demand_ammonia:
+        constraints:
+          resource: -711.6750833333334
+      demand_power:
+        constraints:
+          resource: file=cluster_demand_profiles.csv:cluster_0
+      electrolyser: null
+      fuel_cell: null
+      haber_and_air_separation: null
+      hydrogen_ccgt: null
+      onshore_wind:
+        constraints:
+          resource: file=cluster_wind_profiles_weighted.csv:cluster_0
+      solar_single_axis:
+        constraints:
+          resource: file=cluster_solar_profiles_weighted.csv:cluster_0
+  region_49_5_35_25:
+    coordinates:
+      lat: 49.5
+      lon: 35.25
+    techs:
+      ammonia_ccgt: null
+      ammonia_storage: null
+      battery: null
+      compressed_hydrogen_storage: null
+      demand_ammonia:
+        constraints:
+          resource: -0.0
+      demand_power:
+        constraints:
+          resource: file=cluster_demand_profiles.csv:cluster_1
+      electrolyser: null
+      fuel_cell: null
+      haber_and_air_separation: null
+      hydrogen_ccgt: null
+      onshore_wind:
+        constraints:
+          resource: file=cluster_wind_profiles_weighted.csv:cluster_1
+      solar_single_axis:
+        constraints:
+          resource: file=cluster_solar_profiles_weighted.csv:cluster_1
+  region_49_75_26_75:
+    coordinates:
+      lat: 49.75
+      lon: 26.75
+    techs:
+      ammonia_ccgt: null
+      ammonia_storage: null
+      battery: null
+      compressed_hydrogen_storage: null
+      demand_ammonia:
+        constraints:
+          resource: -793.7472899543379
+      demand_power:
+        constraints:
+          resource: file=cluster_demand_profiles.csv:cluster_2
+      electrolyser: null
+      fuel_cell: null
+      haber_and_air_separation: null
+      hydrogen_ccgt: null
+      onshore_wind:
+        constraints:
+          resource: file=cluster_wind_profiles_weighted.csv:cluster_2
+      solar_single_axis:
+        constraints:
+          resource: file=cluster_solar_profiles_weighted.csv:cluster_2
+
+##
+# TRANSMISSION CAPACITIES
+##
+links:
+  region_47_0_32_25,region_49_5_35_25:
+    techs:
+      ammonia_pipeline:
+        distance: 358.93662575175347
+      dc_transmission:
+        distance: 358.93662575175347
+      hydrogen_pipeline:
+        distance: 358.93662575175347
+  region_47_0_32_25,region_49_75_26_75:
+    techs:
+      ammonia_pipeline:
+        distance: 506.3542107746864
+      dc_transmission:
+        distance: 506.3542107746864
+      hydrogen_pipeline:
+        distance: 506.3542107746864
+  region_49_5_35_25,region_49_75_26_75:
+    techs:
+      ammonia_pipeline:
+        distance: 610.690644092812
+      dc_transmission:
+        distance: 610.690644092812
+      hydrogen_pipeline:
+        distance: 610.690644092812
+
+##
+# GROUP CONSTRAINTS
+##
+group_constraints:
+  combined_wind_solar_area_limit_region_47_0_32_25:
+    locs:
+    - region_47_0_32_25
+    resource_area_max: 11416.693383134
+    techs:
+    - onshore_wind
+    - solar_single_axis
+  combined_wind_solar_area_limit_region_49_5_35_25:
+    locs:
+    - region_49_5_35_25
+    resource_area_max: 15773.81985046
+    techs:
+    - onshore_wind
+    - solar_single_axis
+  combined_wind_solar_area_limit_region_49_75_26_75:
+    locs:
+    - region_49_75_26_75
+    resource_area_max: 16634.150487679002
+    techs:
+    - onshore_wind
+    - solar_single_axis

@@ -1,0 +1,460 @@
+##
+# TECHNOLOGY DEFINITIONS
+##
+
+techs:
+
+    ##
+    # Supply
+    ##
+
+    onshore_wind:
+        essentials:
+            name: 'Onshore Wind'
+            color: '#8ecae6'
+            parent: supply
+            carrier_out: power
+        constraints:
+            resource: file=weather_resource.csv:onshore_wind_power
+            resource_unit: energy_per_cap # energy per capacity, implies amount of capacity to be built is an objective
+            # energy_eff: 0.4
+            # parasitic_eff: 0.9
+            # resource_area_max: inf
+            energy_cap_max: inf # kW
+            resource_area_per_energy_cap: 200 # m2 per kW (Verschuur et al. 2024)
+            lifetime: 20 # years
+        costs:
+            monetary:
+                energy_cap: 1044 # USD/kW Based on PELP 2040 in medium
+                interest_rate: 0.10 # IRENA currently
+                om_annual_investment_fraction: 0.02
+
+    offshore_wind:
+        essentials:
+            name: 'Offshore Wind'
+            color: '#8ecae6'
+            parent: supply
+            carrier_out: power
+        constraints:
+            resource: file=weather_resource.csv:offshore_wind_power
+            resource_unit: energy_per_cap # energy per capacity, implies amount of capacity to be built is an objective
+            # energy_eff: 0.4
+            # parasitic_eff: 0.9
+            # resource_area_max: inf
+            energy_cap_max: inf # kW
+            resource_area_per_energy_cap: 200 # m2 per kW (Verschuur et al. 2024)
+            lifetime: 20 # years
+        costs:
+            monetary:
+                energy_cap: 2842 # don really matter
+                interest_rate: 0.10
+                om_annual_investment_fraction: 0.02
+
+    solar_single_axis:
+        essentials:
+            name: 'Solar single axis'
+            color: '#FDFD96'
+            parent: supply
+            carrier_out: power
+        constraints:
+            resource: file=weather_resource.csv:solar_power
+            resource_unit: energy_per_cap # energy per capacity, implies amount of capacity to be built is an objective
+            # energy_eff: 0.4
+            # parasitic_eff: 0.9
+            # resource_area_max: inf
+            energy_cap_max: inf # kW
+            resource_area_per_energy_cap: 9 # m2 per kW (average Verschuur et al. 2024 value - # TODO: need to vary with latitude)
+            lifetime: 20 # years
+        costs:
+            monetary:
+                energy_cap: 557 # USD/kW 2040 PELP in medium
+                interest_rate: 0.10 # IRENA currently
+                om_annual_investment_fraction: 0.02
+
+    tidal:
+        essentials:
+            name: 'Tidal'
+            color: '#219ebc'
+            parent: supply
+            carrier_out: power
+        constraints:
+            resource: file=weather_resource.csv:tidal_power
+            resource_unit: energy_per_cap # energy per capacity, implies amount of capacity to be built is an objective
+            # energy_eff: 0.4
+            # parasitic_eff: 0.9
+            # resource_area_max: inf
+            energy_cap_max: inf # kW
+            lifetime: 20 # years # (from Queensland report)
+        costs:
+            monetary:
+                energy_cap: 2200 # dont really matter as likely not built at large scale in this region
+                interest_rate: 0.10 # IRENA currently 
+                om_annual_investment_fraction: 0.02 # (from Queensland report)
+
+    ##
+    # Storage
+    ##
+    # battery-start
+    battery:
+        essentials:
+            name: 'Battery storage'
+            color: '#3B61E3'
+            parent: storage
+            carrier: power
+        constraints:
+            # energy_cap_max: 1000  # kW
+            storage_cap_max: inf
+            energy_cap_per_storage_cap_max: 4 # kW/kWh charge/discharge rate / capacity
+            energy_eff: 0.95  # 0.95 * 0.95 = 0.9025 round trip efficiency
+            storage_loss: 0  # No loss over time assumed
+            lifetime: 20
+        costs:
+            monetary:
+                interest_rate: 0.10 # IRENA currently
+                storage_cap: 204  # $/kWh considenring 816 USD/kW divided by 4 kW/kWh charge/discharge rate Taken from PELP 2040 for utility scale battery storage
+                om_annual_investment_fraction: 0.02 #IRENA currently
+    # battery-end
+
+    compressed_hydrogen_storage:
+        essentials:
+            name: 'Compressed hydrogen storage'
+            color: '#afeeee'
+            parent: storage
+            carrier: hydrogen
+        constraints:
+            # energy_cap_max: 1000  # kW
+            storage_cap_max: inf
+            # energy_cap_per_storage_cap_max: 4
+            energy_eff: 0.90  # 0.90 * 1.0 = 0.9 round trip efficiency
+            storage_loss: 0  # Fraction lost per hour
+            lifetime: 20
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                storage_cap: 21.7  # USD per kWh storage capacity (Queensland report 949 USD/kg/HHV)
+                om_annual_investment_fraction: 0.02
+
+    cavern_hydrogen_storage:
+        essentials:
+            name: 'Cavern hydrogen storage'
+            color: '#afeeee'
+            parent: storage
+            carrier: hydrogen
+        constraints:
+            # energy_cap_max: 1000  # kW
+            storage_cap_max: inf
+            # energy_cap_per_storage_cap_max: 4
+            energy_eff: 0.90  # 0.90 * 1.0 = 0.9 round trip efficiency
+            storage_loss: 0  # Fraction lost per hour
+            lifetime: 20
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                storage_cap: 0.84  # USD per kWh storage capacity (Queensland report 33 USD/kg/HHV)
+                om_annual_investment_fraction: 0.02
+
+    ammonia_storage:
+        essentials:
+            name: 'Ammonia storage'
+            color: '#b2ff9e'
+            parent: storage
+            carrier: ammonia
+        constraints:
+            # energy_cap_max: 1000  # kW
+            storage_cap_max: inf
+            # energy_cap_per_storage_cap_max: 4
+            energy_eff: 1.0 # 0.99  # 0.99 * 1.0 = 0.9 round trip efficiency
+            storage_loss: 0  # Fraction lost per hour
+            lifetime: 20
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                storage_cap: 0.48  # USD per kWh storage capacity (Queensland report 3000 USD/t/HHV)
+                om_annual_investment_fraction: 0.02
+
+    ##
+    # Conversion
+    ##
+
+    electrolyser:
+        essentials:
+            name: 'Electrolyser'
+            color: '#b87333'
+            parent: conversion
+            carrier_in: power
+            carrier_out: hydrogen
+        constraints:
+            energy_eff: 0.79 # HHV/50kWh/kg (from 2030 Queensland report) # Desalination energy demand is 4.2 kWh/t_water (from Queensland report)
+                             # Stochiometry: 9 kg_water per kg_hydrogen
+                             # Real water usage up to 20 kg
+                             # Total energy_eff = 39.4/(50 + 20*0.0042) = 0.79
+            energy_cap_max: inf  # Maximum capacity in kW
+            # energy_ramping: 0.1  # Ramping constraint
+            lifetime: 20
+            # energy_cap_min_use: 0.1 # Minimum capacity required to be used in each time step
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                energy_cap: 1400  # USD/KW from IEA https://iea.blob.core.windows.net/assets/15673ab3-a86a-4434-bff4-490bb42d3563/GlobalHydrogenReview2025AssumptionsAnnex.pdf
+                om_annual_investment_fraction: 0.02 
+
+    fuel_cell:
+        essentials:
+            name: 'Fuel cell'
+            color: '#e9c46a'
+            parent: conversion
+            carrier_in: hydrogen
+            carrier_out: power
+        constraints:
+            energy_eff: 0.5  # Efficiency (from Queensland report)
+            energy_cap_max: inf  # Maximum capacity in kW
+            # energy_ramping: 0.1  # Ramping constraint
+            lifetime: 20
+            # energy_cap_min_use: 0.1 # Minimum capacity required to be used in each time step
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                energy_cap: 230  # USD per kW of capacity (from Queensland report 2030)
+                om_annual_investment_fraction: 0.02
+
+    haber_and_air_separation:
+        essentials:
+            name: 'Haber and air separation'
+            color: '#588157'
+            parent: conversion_plus
+            primary_carrier_in: power
+            carrier_in: power
+            carrier_in_2: hydrogen
+            carrier_out: ammonia
+        constraints:
+            energy_eff: 1.0 # Accounted for by carrier ratios # Corresponds to 0.78 # (ammonia out * HHV) / Energy in (1MWh energy per t ammonia from Queensland report + 177kg hydrogen)
+            energy_cap_max: inf  # Maximum capacity in kW
+            energy_ramping: 0.02  # Ramping constraint
+            carrier_ratios: # out / ratio_out = eff * in * ratio_in. Always check carrier_con results if changing ratios.
+                carrier_in: {power: 1}
+                carrier_in_2: {hydrogen: 6.974} # Assuming 1MWh and 177kg hydrogen per t ammonia (from Queensland report)
+                carrier_out: {ammonia: 6.25}  
+            lifetime: 20
+            energy_cap_min_use: 0.3 # Minimum capacity required to be used in each time step (Queensland report)
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                energy_cap: 785 # IEA report
+                om_annual_investment_fraction: 0.02
+
+# Need to figure out whether biodigester or gasification of solid biomass is cheapest at large scales for biogas
+# Same for methanol
+    bio_methane:
+        essentials:
+            name: 'Biomethane production'
+            color: '#589157'
+            parent: conversion_plus
+            primary_carrier_in: power
+            carrier_in: power
+            carrier_in_2: hydrogen
+            carrier_out: methane
+        constraints:
+            energy_eff: 1.0 # Accounted for by carrier ratios # Corresponds to 0.78 # (ammonia out * HHV) / Energy in (1MWh energy per t ammonia from Queensland report + 177kg hydrogen)
+            energy_cap_max: inf  # Maximum capacity in kW
+            energy_ramping: 0.02  # Ramping constraint
+            carrier_ratios: # out / ratio_out = eff * in * ratio_in. Always check carrier_con results if changing ratios.
+                carrier_in: {power: 1}
+                carrier_in_2: {hydrogen: 6.974} # Assuming 1MWh and 177kg hydrogen per t ammonia (from Queensland report)
+                carrier_out: {ammonia: 6.25}  
+            lifetime: 20
+            energy_cap_min_use: 0.3 # Minimum capacity required to be used in each time step (Queensland report)
+        costs:
+            monetary:
+                interest_rate: 0.1 # IRENA currently
+                energy_cap: 931 # USD per kW of power capacity (converted from Queensland report as output ammonia kWh/h)
+                om_annual_investment_fraction: 0.02
+
+    # Endpoint conversion
+
+    hydrogen_ccgt:
+        essentials:
+            name: 'Hydrogen CCGT'
+            color: '#E37A72'
+            parent: conversion
+            carrier_in: hydrogen
+            carrier_out: power
+        constraints:
+            energy_eff: 0.55 # (from RS report) 
+            energy_cap_max: inf  # Maximum capacity in kW
+            energy_ramping: 0.1  # Ramping constraint
+            lifetime: 20
+            # energy_cap_min_use: 0.1 # Minimum capacity required to be used in each time step
+        costs:
+            monetary:
+                interest_rate: 0.1
+                energy_cap: 958  # (from 2020 USA EIA report)
+                om_annual_investment_fraction: 0.02
+
+    ammonia_ccgt:
+        essentials:
+            name: 'Ammonia CCGT'
+            color: '#E37A72'
+            parent: conversion
+            carrier_in: ammonia
+            carrier_out: power
+        constraints:
+            energy_eff: 0.55 # (from RS report) 
+            energy_cap_max: inf  # Maximum capacity in kW
+            energy_ramping: 0.1  # Ramping constraint
+            lifetime: 20
+            # energy_cap_min_use: 0.1 # Minimum capacity required to be used in each time step
+        costs:
+            monetary:
+                interest_rate: 0.1
+                energy_cap: 958  # Assumed same as hydrogen_ccgt
+                om_annual_investment_fraction: 0.02
+
+
+                
+
+    ##
+    # Demand
+    ##
+
+    demand_hydrogen:
+        essentials:
+            name: 'Hydrogen demand'
+            color: '#072486'
+            parent: demand
+            carrier: hydrogen
+        constraints:
+            # resource: file=demand_single.csv:demand # kWh hydrogen
+            # resource: file=demand-2.csv:demand_end
+            resource: -1 # kWh per hour
+
+    demand_ammonia:
+        essentials:
+            name: 'Ammonia demand'
+            color: '#072486'
+            parent: demand
+            carrier: ammonia
+        constraints:
+            # resource: file=demand_single.csv:demand # kWh ammonia
+            # resource: file=demand-2.csv:demand_end
+            resource: -1 # kWh per hour
+
+    demand_power:
+        essentials:
+            name: 'Power demand'
+            color: '#072486'
+            parent: demand
+            carrier: power
+        constraints:
+            # resource: file=demand_single.csv:demand # kWh ammonia
+            # resource: file=demand-2.csv:demand_end
+            resource: -1 # kWh per hour
+
+    ##
+    # Transmission
+    ##
+
+    # transmission-start
+    dc_transmission:
+        essentials:
+            name: 'DC power transmission'
+            color: '#F9E076'
+            parent: transmission
+            carrier: power
+        constraints:
+            # one_way: true
+            # energy_eff: 0.87 # from DeSantis 2021 per 1000 miles. 1.609 mile/km.
+            # energy_eff_per_distance: 0.99991318 # per km e=E^(1/D)=0.87^(1/1609)
+            energy_eff_per_distance: 0.9999999131 # per m e=E^(1/D)=0.87^(1/1609340) 
+            # WARNING: If no distances are defined in the links in locations.yaml
+            # Calliope will calculate them in metres - which makes efficiencies and costs per km incorrect. 
+            # Future releases of Calliope will default to km.
+            lifetime: 60
+        costs:
+            monetary:
+                interest_rate: 0.10 # 0.08 in DeSantis 2021
+                # energy_cap: 200
+                # energy_cap_per_distance: 0.93 # USD/km/kW (from DeSantis 2021 1502/mile/MW /1.60934km/mile/1000kW/MW on LHV basis)
+                energy_cap_per_distance: 0.00093 # USD/m/kW 
+                om_annual_investment_fraction: 0.06 # 0.055 in DeSantis 2021
+
+    hydrogen_pipeline:
+        essentials:
+            name: 'Hydrogen pipeline'
+            color: '#AEC6CF'
+            parent: transmission
+            carrier: hydrogen
+        constraints:
+            # one_way: true
+            # energy_eff: 0.98 # from DeSantis 2021
+            # energy_eff_per_distance: 0.99998745 # per km 
+            energy_eff_per_distance: 0.9999999874 # per m
+            lifetime: 33
+        costs:
+            monetary:
+                interest_rate: 0.10 # 0.08 in DeSantis 2021
+                # energy_cap: 200
+                # energy_cap_per_distance: 100 # test # 0.791 # IEA 2019 1210000 USD/km 340 ktH2 throughput assumptions annex
+                # energy_cap_per_distance: 0.17 # USD/km/kW (from DeSantis 2021)
+                energy_cap_per_distance: 0.00017 # USD/m/kW
+                om_annual_investment_fraction: 0.06 # 0.055 in DeSantis 2021
+
+    ammonia_pipeline:
+        essentials:
+            name: 'Ammonia pipeline'
+            color: '#8465A6'
+            parent: transmission
+            carrier: ammonia
+        constraints:
+            # one_way: true
+            # energy_eff: 0.99 # Likely higher than 0.98 DeSantis for gas
+            energy_eff_per_distance: 0.9999999938 # per m
+            lifetime: 33 
+        costs:
+            monetary:
+                interest_rate: 0.0872 # (from Queensland report)
+                # energy_cap: 200
+                # energy_cap_per_distance: 0.07236 # USD/km/kW guesstimate 1.2 times DeSantis 2021 methane pipeline cost
+                energy_cap_per_distance: 0.00007236 # USD/m/kW 
+                # energy_cap_per_distance: # 0.565 # IEA 2019 550000 USD/km 240 ktH2 throughput assumptions annex
+                # energy_cap_per_distance: 0.18 # Ammonia energy association 2019 Leighty 180 USD/MW/km
+                                              # 0.001 # USD/km/kW (from Queensland report 7.1 Ammonia pipeline cost AUD/transported t/km *0.6645 USD/AUD * 6.25 MWh/t)   
+                om_annual_investment_fraction: 0.06 # 0.055 in DeSantis 2021
+
+    methane_pipeline:
+        essentials:
+            name: 'Methane pipeline'
+            color: '#8465A6'
+            parent: transmission
+            carrier: methane
+        constraints:
+            # one_way: true
+            # energy_eff: 0.99
+            energy_eff_per_distance: 0.99999
+            lifetime: 25 
+        costs:
+            monetary:
+                interest_rate: 0.0872 # (from Queensland report)
+                # energy_cap: 200
+                energy_cap_per_distance: 0.0603 # USD/km/kW (from DeSantis 2021)
+                om_annual_investment_fraction: 0.06
+
+    # methanol_pipeline:
+    #     essentials:
+    #         name: 'Methanol pipeline'
+    #         color: '#8465A6'
+    #         parent: transmission
+    #         carrier: methanol
+    #     constraints:
+    #         # energy_eff: 0.99 # Likely higher than 0.98 DeSantis for gas
+    #         energy_eff_per_distance: 0.99999
+    #         lifetime: 25 
+    #     costs:
+    #         monetary:
+    #             interest_rate: 0.0872 # (from Queensland report)
+    #             # energy_cap: 200
+    #             energy_cap_per_distance: 0.0317 # USD/km/kW (from DeSantis 2021)
+    #             om_annual_investment_fraction: 0.06
+
+    # transmission-end
+    
+    # Queensland report conversions 0.6645 AUD/USD using 2023 mean exchange rate
